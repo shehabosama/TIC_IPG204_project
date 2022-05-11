@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setTitle("Home");
         materialBtn = findViewById(R.id.material_btn);
         ownerBtn = findViewById(R.id.owner_btn);
         outlayBtn = findViewById(R.id.outlay_btn);

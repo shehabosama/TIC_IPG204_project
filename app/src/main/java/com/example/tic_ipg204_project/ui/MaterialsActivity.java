@@ -34,7 +34,7 @@ public class MaterialsActivity extends AppCompatActivity implements MaterialsAda
     }
 
     public void initialization() {
-        getSupportActionBar().setTitle("Owners");
+        getSupportActionBar().setTitle("Materials");
         myDbAdapter = new MyDbAdapter(this);
         materials = new ArrayList<>();
         materials.addAll(myDbAdapter.getMaterialsData());

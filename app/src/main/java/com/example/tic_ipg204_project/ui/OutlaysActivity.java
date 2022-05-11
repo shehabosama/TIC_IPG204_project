@@ -30,7 +30,7 @@ public class OutlaysActivity extends AppCompatActivity implements OutlaysAdapter
     }
 
     public void initialization(){
-        getSupportActionBar().setTitle("Owners");
+        getSupportActionBar().setTitle("Outlays");
         myDbAdapter = new MyDbAdapter(this);
         outLays = new ArrayList<>();
         outLays.addAll(myDbAdapter.getOutlayData());

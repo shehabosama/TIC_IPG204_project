@@ -27,6 +27,7 @@ public class MaterialUpdateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_material_update);
+        getSupportActionBar().setTitle("Update Material");
         editMaterialName = findViewById(R.id.et_material_name);
         editMaterialDescription = findViewById(R.id.et_material_description);
         createMaterialButton =findViewById(R.id.btn_done);

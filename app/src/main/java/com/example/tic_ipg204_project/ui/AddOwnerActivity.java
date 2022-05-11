@@ -20,6 +20,7 @@ public class AddOwnerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_owner);
+        getSupportActionBar().setTitle("Add Owner");
         editOwnerName = findViewById(R.id.et_owner_name);
         editOwnerDescription = findViewById(R.id.et_owner_description);
         createOwnerButton =findViewById(R.id.btn_done);

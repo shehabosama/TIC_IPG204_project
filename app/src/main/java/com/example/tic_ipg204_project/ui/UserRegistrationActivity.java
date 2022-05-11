@@ -21,6 +21,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_registration);
+        getSupportActionBar().setTitle("Create new Account");
         editEmail = findViewById(R.id.et_email);
         editPassword = findViewById(R.id.et_password);
         editConfirmPassword = findViewById(R.id.et_conf_password);

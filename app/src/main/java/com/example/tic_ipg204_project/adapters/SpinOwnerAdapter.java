@@ -49,6 +49,7 @@ public class SpinOwnerAdapter extends ArrayAdapter<Owner> {
         // I created a dynamic TextView here, but you can reference your own  custom layout for each spinner item
         TextView label = (TextView) super.getView(position, convertView, parent);
         label.setTextColor(Color.BLACK);
+        label.setPadding(5,5,0,5);
         // Then you can get the current item using the values array (Users array) and the current position
         // You can NOW reference each method you has created in your bean object (User class)
         label.setText(values.get(position).getOwnerId()+" - "+values.get(position).getOwnerName());
@@ -64,6 +65,7 @@ public class SpinOwnerAdapter extends ArrayAdapter<Owner> {
                                 ViewGroup parent) {
         TextView label = (TextView) super.getDropDownView(position, convertView, parent);
         label.setTextColor(Color.BLACK);
+        label.setPadding(5,5,0,5);
         label.setText(values.get(position).getOwnerId()+" - "+values.get(position).getOwnerName());
 
         return label;

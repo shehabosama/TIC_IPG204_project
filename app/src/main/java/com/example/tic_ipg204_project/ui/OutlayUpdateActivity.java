@@ -45,6 +45,7 @@ public class OutlayUpdateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outlay_update);
+        getSupportActionBar().setTitle("Update Outlay");
         myDbAdapter = new MyDbAdapter(this);
         date_btn = findViewById(R.id.butto_date);
         editTextPrice = findViewById(R.id.edit_price);
