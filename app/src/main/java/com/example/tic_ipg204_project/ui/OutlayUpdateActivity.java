@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -29,8 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class AddOutlayActivity extends AppCompatActivity  {
-
+public class OutlayUpdateActivity extends AppCompatActivity {
     Button date_btn , btn_done;
     private Calendar c;
     List<Material> materials;
@@ -41,19 +40,34 @@ public class AddOutlayActivity extends AppCompatActivity  {
     private SpinOwnerAdapter spinOwnerAdapter;
     private int materialId , ownerId;
     private String yourDateString;
+    private String outlayId , outlayPrice , outlayDescription , outlayDate;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_outlay);
+        setContentView(R.layout.activity_outlay_update);
         myDbAdapter = new MyDbAdapter(this);
         date_btn = findViewById(R.id.butto_date);
         editTextPrice = findViewById(R.id.edit_price);
         editTextDescription = findViewById(R.id.edit_description);
         btn_done = findViewById(R.id.btn_done);
         c = Calendar.getInstance();
+        Intent intent = getIntent();
+        if(intent != null){
+            outlayId = intent.getStringExtra("OUTLAY_ID");
+            outlayPrice = intent.getStringExtra("OUTLAY_PRICE");
+            outlayDescription = intent.getStringExtra("OUTLAY_DESCRIPTION");
+            outlayDate = intent.getStringExtra("OUTLAY_DATE");
+            date_btn.setText(outlayDate);
+            editTextDescription.setText(outlayDescription);
 
-         materials = myDbAdapter.getMaterialsData();
-         spinMaterialAdapter = new SpinMaterialAdapter(AddOutlayActivity.this,
+            editTextPrice.setText(outlayPrice);
+        }
+        else{
+            Toast.makeText(OutlayUpdateActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        materials = myDbAdapter.getMaterialsData();
+        spinMaterialAdapter = new SpinMaterialAdapter(OutlayUpdateActivity.this,
                 android.R.layout.simple_spinner_item,
                 materials);
         Spinner materialSpinner =  findViewById(R.id.spinner);
@@ -72,7 +86,7 @@ public class AddOutlayActivity extends AppCompatActivity  {
 
 
         owners = myDbAdapter.getOwnersData();
-        spinOwnerAdapter = new SpinOwnerAdapter(AddOutlayActivity.this,
+        spinOwnerAdapter = new SpinOwnerAdapter(OutlayUpdateActivity.this,
                 android.R.layout.simple_spinner_item,
                 owners);
         Spinner ownerSpinner =  findViewById(R.id.spinnerOwner);
@@ -96,7 +110,7 @@ public class AddOutlayActivity extends AppCompatActivity  {
             }
             @Override
             public void onClick(View view) {
-                Dialog datePickerDialog = new DatePickerDialog(AddOutlayActivity.this, new DatePickerDialog.OnDateSetListener() {
+                Dialog datePickerDialog = new DatePickerDialog(OutlayUpdateActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
@@ -120,20 +134,20 @@ public class AddOutlayActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
                 if (materialId >0 && ownerId >0 &&
-                                !TextUtils.isEmpty(editTextPrice.getText().toString()) &&
-                                !TextUtils.isEmpty(editTextDescription.getText().toString())&&
-                                !TextUtils.isEmpty(yourDateString))  {
-                    myDbAdapter.insertOutLayData(materialId,ownerId,editTextPrice.getText().toString(),yourDateString , editTextDescription.getText().toString());
-                    if (  myDbAdapter.insertOutLayData(materialId,ownerId,editTextPrice.getText().toString(),yourDateString , editTextDescription.getText().toString()) != -1){
-                        Toast.makeText(AddOutlayActivity.this, "Outlay Added Successfully", Toast.LENGTH_SHORT).show();
+                        !TextUtils.isEmpty(editTextPrice.getText().toString()) &&
+                        !TextUtils.isEmpty(editTextDescription.getText().toString())&&
+                        !TextUtils.isEmpty(date_btn.getText().toString()))  {
+
+                    if ( myDbAdapter.updateOutlay(outlayId,materialId,ownerId,editTextPrice.getText().toString(),date_btn.getText().toString() , editTextDescription.getText().toString()) != -1){
+                        Toast.makeText(OutlayUpdateActivity.this, "Outlay Updated Successfully", Toast.LENGTH_SHORT).show();
                         editTextDescription.setText("");
                         editTextPrice.setText("");
                     }else{
-                        Toast.makeText(AddOutlayActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(OutlayUpdateActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
 
                     }
                 }else{
-                    Toast.makeText(AddOutlayActivity.this, "please make sure that all field is filled", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(OutlayUpdateActivity.this, "please make sure that all field is filled", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -148,14 +162,14 @@ public class AddOutlayActivity extends AppCompatActivity  {
         try {
             Date yourDate = yourDateFormat.parse(yourDateString);
             SimpleDateFormat formatNowDay = new SimpleDateFormat("dd");
-        SimpleDateFormat formatNowMonth = new SimpleDateFormat("MM");
-        SimpleDateFormat formatNowYear = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            formatNowYear = new SimpleDateFormat("yyyy");
-        }
-        String currentDay = formatNowDay.format(yourDate);
-        String currentMonth = formatNowMonth.format(yourDate);
-        String currentYear = formatNowYear.format(yourDate);
+            SimpleDateFormat formatNowMonth = new SimpleDateFormat("MM");
+            SimpleDateFormat formatNowYear = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                formatNowYear = new SimpleDateFormat("yyyy");
+            }
+            String currentDay = formatNowDay.format(yourDate);
+            String currentMonth = formatNowMonth.format(yourDate);
+            String currentYear = formatNowYear.format(yourDate);
             Toast.makeText(this, currentDay+" "+ currentMonth+" "+ currentYear, Toast.LENGTH_SHORT).show();
         } catch (ParseException e) {
             e.printStackTrace();
@@ -163,8 +177,5 @@ public class AddOutlayActivity extends AppCompatActivity  {
 
         date_btn.setText(yourDateString);
     }
-
-
-
 
 }

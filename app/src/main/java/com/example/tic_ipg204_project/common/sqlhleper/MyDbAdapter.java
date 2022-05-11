@@ -2,6 +2,7 @@ package com.example.tic_ipg204_project.common.sqlhleper;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,7 +12,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 
-import com.example.tic_ipg204_project.common.model.UserVacationRequest;
+import com.example.tic_ipg204_project.common.model.Material;
+import com.example.tic_ipg204_project.common.model.OutLay;
+import com.example.tic_ipg204_project.common.model.Owner;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +32,8 @@ public class MyDbAdapter {
     {
         SQLiteDatabase dbb = myhelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(myDbHelper.M_NAME, ownerName);
-        contentValues.put(myDbHelper.M_DESCRIPTION,ownerDescription);
+        contentValues.put(myDbHelper.O_NAME, ownerName);
+        contentValues.put(myDbHelper.O_DESCRIPTION,ownerDescription);
         long id = dbb.insert(myDbHelper.OWNER, null , contentValues);
         return id;
     }
@@ -53,52 +57,233 @@ public class MyDbAdapter {
         long id = dbb.insert(myDbHelper.USER_TABLE, null , contentValues);
         return id;
     }
-
-    /*public List<UserVacationRequest> getData()
+    public long insertOutLayData( int materialId, int ownerId,String price , String date , String description)
+    {
+        SQLiteDatabase dbb = myhelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(myDbHelper.OUTLAY_M_ID,materialId);
+        contentValues.put(myDbHelper.OUTLAY_O_ID,ownerId);
+        contentValues.put(myDbHelper.OUT_DESCRIPTION,description);
+        contentValues.put(myDbHelper.PRICE,price);
+        contentValues.put(myDbHelper.DATE,date);
+        long id = dbb.insert(myDbHelper.OUTLAY, null , contentValues);
+        return id;
+    }
+    @SuppressLint("Range")
+    public List<Material> getMaterialsData()
     {
         SQLiteDatabase db = myhelper.getWritableDatabase();
-        String[] columns = {myDbHelper.UID, myDbHelper.EMAIL,myhelper.NUMBER_OF_DAYS, myDbHelper.START_DATE, myDbHelper.MANAGER_NAME , myDbHelper.PASSWORD};
-        Cursor cursor =db.query(myDbHelper.USER_TABLE,columns,null,null,null,null,null);
+        String[] columns = {myDbHelper.M_ID, myDbHelper.M_NAME,myDbHelper.M_DESCRIPTION, myDbHelper.IS_SERVICE};
+        Cursor cursor =db.query(myDbHelper.MATERIAL,columns,null,null,null,null,null);
         StringBuffer buffer= new StringBuffer();
-        List<UserVacationRequest> userVacationRequests = new ArrayList<>();
+        List<Material> materials = new ArrayList<>();
         while (cursor.moveToNext())
         {
-            int cid =cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
-            String name =cursor.getString(cursor.getColumnIndex(myDbHelper.EMAIL));
-            int numberOfDays =cursor.getInt(cursor.getColumnIndex(myDbHelper.NUMBER_OF_DAYS));
-            String startDate =cursor.getString(cursor.getColumnIndex(myDbHelper.START_DATE));
-            String reason =cursor.getString(cursor.getColumnIndex(myDbHelper.PASSWORD));
-            String managerName =cursor.getString(cursor.getColumnIndex(myDbHelper.MANAGER_NAME));
-            userVacationRequests.add(new UserVacationRequest(cid,numberOfDays,startDate,managerName,reason,name));
+            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.M_ID));
+            String name =cursor.getString(cursor.getColumnIndex(myDbHelper.M_NAME));
+            String description =cursor.getString(cursor.getColumnIndex(myDbHelper.M_DESCRIPTION));
+            boolean iService =cursor.getInt(cursor.getColumnIndex(myDbHelper.IS_SERVICE))>0;
+
+            materials.add(new Material(id,name,description,iService));
         }
-        return userVacationRequests;
+        return materials;
     }
-*/
-    public  int delete(String uId)
+    @SuppressLint("Range")
+    public List<OutLay> getOutlayData()
     {
         SQLiteDatabase db = myhelper.getWritableDatabase();
-        String[] whereArgs ={uId};
+        String[] columns = {myDbHelper.OUT_ID, myDbHelper.OUT_DESCRIPTION, myDbHelper.OUTLAY_M_ID,myDbHelper.OUTLAY_O_ID, myDbHelper.PRICE , myDbHelper.DATE};
+        Cursor cursor =db.query(myDbHelper.OUTLAY,columns,null,null,null,null,null);
+        StringBuffer buffer= new StringBuffer();
+        List<OutLay> outLays = new ArrayList<>();
+        while (cursor.moveToNext())
+        {
+            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
+            int materialId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_M_ID));
+            int ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
+            double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
+            String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
+            String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
 
-        int count =db.delete(myDbHelper.USER_TABLE, myDbHelper.UID+" = ?",whereArgs);
+            outLays.add(new OutLay(id,ownerId,materialId , price,date,description));
+        }
+        return outLays;
+    }
+    @SuppressLint("Range")
+    public List<Owner> getOwnersData()
+    {
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        String[] columns = {myDbHelper.O_ID, myDbHelper.O_NAME,myDbHelper.O_DESCRIPTION};
+        Cursor cursor =db.query(myDbHelper.OWNER,columns,null,null,null,null,null);
+        StringBuffer buffer= new StringBuffer();
+        List<Owner> owners = new ArrayList<>();
+        while (cursor.moveToNext())
+        {
+            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.O_ID));
+            String name =cursor.getString(cursor.getColumnIndex(myDbHelper.O_NAME));
+            String description =cursor.getString(cursor.getColumnIndex(myDbHelper.O_DESCRIPTION));
+
+
+            owners.add(new Owner(id,name,description));
+        }
+        return owners;
+    }
+    @SuppressLint("Range")
+    public boolean userIsExist(String email , String password)
+    {
+        boolean userChecker = false;
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        String[] columns = {myDbHelper.UID, myDbHelper.EMAIL,myDbHelper.PASSWORD};
+        Cursor cursor =db.query(myDbHelper.USER_TABLE,columns,null,null,null,null,null);
+        StringBuffer buffer= new StringBuffer();
+        List<Owner> owners = new ArrayList<>();
+        while (cursor.moveToNext())
+        {
+            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
+            String _email =cursor.getString(cursor.getColumnIndex(myDbHelper.EMAIL));
+            String _password =cursor.getString(cursor.getColumnIndex(myDbHelper.PASSWORD));
+            if(email.equals(_email) && password.equals(_password)){
+                userChecker = true;
+            }else{
+                userChecker = false;
+            }
+
+        }
+        return userChecker;
+    }
+    @SuppressLint("Range")
+    public Owner getOwnerById(int ownerId)
+    {
+        SQLiteDatabase dbb = myhelper.getWritableDatabase();
+        Cursor cursor=null;
+        Owner owner = null;
+        cursor =  dbb.rawQuery("select * from " + myDbHelper.OWNER + " where " + myDbHelper.O_ID + "=" + ownerId  , null);
+        if (cursor != null)
+        {
+            if (cursor.moveToFirst())
+            {
+                int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.O_ID));
+                String name =cursor.getString(cursor.getColumnIndex(myDbHelper.O_NAME));
+                String description =cursor.getString(cursor.getColumnIndex(myDbHelper.O_DESCRIPTION));
+                owner=new Owner(id,name,description);
+
+            }
+            cursor.close();
+        }
+        return owner;
+    }
+    @SuppressLint("Range")
+    public Material getMaterialById(int materialId)
+    {
+        SQLiteDatabase dbb = myhelper.getWritableDatabase();
+        Cursor cursor=null;
+        Material material = null;
+        cursor =  dbb.rawQuery("select * from " + myDbHelper.MATERIAL + " where " + myDbHelper.M_ID + "=" + materialId  , null);
+        if (cursor != null)
+        {
+            if (cursor.moveToFirst())
+            {
+                int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.M_ID));
+                String name =cursor.getString(cursor.getColumnIndex(myDbHelper.M_NAME));
+                String description =cursor.getString(cursor.getColumnIndex(myDbHelper.M_DESCRIPTION));
+                boolean iService =cursor.getInt(cursor.getColumnIndex(myDbHelper.IS_SERVICE))>0;
+                material=new Material(id,name,description,iService);
+
+            }
+            cursor.close();
+        }
+        return material;
+    }
+
+    /*public List<UserVacationRequest> getData()
+{
+    SQLiteDatabase db = myhelper.getWritableDatabase();
+    String[] columns = {myDbHelper.UID, myDbHelper.EMAIL,myhelper.NUMBER_OF_DAYS, myDbHelper.START_DATE, myDbHelper.MANAGER_NAME , myDbHelper.PASSWORD};
+    Cursor cursor =db.query(myDbHelper.USER_TABLE,columns,null,null,null,null,null);
+    StringBuffer buffer= new StringBuffer();
+    List<UserVacationRequest> userVacationRequests = new ArrayList<>();
+    while (cursor.moveToNext())
+    {
+        int cid =cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
+        String name =cursor.getString(cursor.getColumnIndex(myDbHelper.EMAIL));
+        int numberOfDays =cursor.getInt(cursor.getColumnIndex(myDbHelper.NUMBER_OF_DAYS));
+        String startDate =cursor.getString(cursor.getColumnIndex(myDbHelper.START_DATE));
+        String reason =cursor.getString(cursor.getColumnIndex(myDbHelper.PASSWORD));
+        String managerName =cursor.getString(cursor.getColumnIndex(myDbHelper.MANAGER_NAME));
+        userVacationRequests.add(new UserVacationRequest(cid,numberOfDays,startDate,managerName,reason,name));
+    }
+    return userVacationRequests;
+}
+*/
+    public  int deleteOwner(String ownerId)
+    {
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        String[] whereArgs ={ownerId};
+
+        int count =db.delete(myDbHelper.OWNER, myDbHelper.O_ID+" = ?",whereArgs);
+
         Log.e(TAG, "delete: "+count );
         return  count;
     }
+    public  int deleteOutlay(String outlayId)
+    {
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        String[] whereArgs ={outlayId};
 
-   /* public int updateName(String email , String newName, String numberOfDays, String startDate , String managerName , String reason)
+        int count =db.delete(myDbHelper.OUTLAY, myDbHelper.OUT_ID+" = ?",whereArgs);
+
+        Log.e(TAG, "delete: "+count );
+        return  count;
+    }
+    public  int deleteMaterial(String materialId)
+    {
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        String[] whereArgs ={materialId};
+
+        int count =db.delete(myDbHelper.MATERIAL, myDbHelper.M_ID+" = ?",whereArgs);
+
+        Log.e(TAG, "delete: "+count );
+        return  count;
+    }
+    public int updateOwner(String id , String newName, String description)
     {
         SQLiteDatabase db = myhelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(myDbHelper.EMAIL,newName);
-        contentValues.put(myDbHelper.NUMBER_OF_DAYS,numberOfDays);
-        contentValues.put(myDbHelper.START_DATE,startDate);
-        contentValues.put(myDbHelper.MANAGER_NAME,managerName);
-        contentValues.put(myDbHelper.PASSWORD,reason);
+        contentValues.put(myDbHelper.O_NAME,newName);
+        contentValues.put(myDbHelper.O_DESCRIPTION,description);
 
-        String[] whereArgs= {email};
-        int count =db.update(myDbHelper.USER_TABLE,contentValues, myDbHelper.UID+" = ?",whereArgs );
+        String[] whereArgs= {id};
+        int count =db.update(myDbHelper.OWNER,contentValues, myDbHelper.O_ID+" = ?",whereArgs );
         return count;
     }
-*/
+    public int updateMaterial(String id , String newName, String description,boolean isService)
+    {
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(myDbHelper.M_NAME,newName);
+        contentValues.put(myDbHelper.M_DESCRIPTION,description);
+        contentValues.put(myDbHelper.IS_SERVICE,isService);
+
+        String[] whereArgs= {id};
+        int count =db.update(myDbHelper.MATERIAL,contentValues, myDbHelper.M_ID+" = ?",whereArgs );
+        return count;
+    }
+
+    public int updateOutlay(String id , int materialId, int ownerId,String price , String date , String description)
+    {
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(myDbHelper.OUTLAY_O_ID,ownerId);
+        contentValues.put(myDbHelper.PRICE,price);
+        contentValues.put(myDbHelper.DATE,date);
+        contentValues.put(myDbHelper.OUTLAY_M_ID,materialId);
+        contentValues.put(myDbHelper.OUT_DESCRIPTION,description);
+
+        String[] whereArgs= {id};
+        int count =db.update(myDbHelper.OUTLAY,contentValues, myDbHelper.OUT_ID+" = ?",whereArgs );
+        return count;
+    }
+
     public static class myDbHelper extends SQLiteOpenHelper
     {
         // Database Name
@@ -129,6 +314,13 @@ public class MyDbAdapter {
         private static final String O_NAME ="o_name" ;
         private static final String O_DESCRIPTION = "o_description";
 
+        // Outlay Table Columns
+        private static final String OUT_ID ="out_id";
+        private static final String OUTLAY_M_ID="outlay_m_Id";
+        private static final String OUTLAY_O_ID="outlay_o_Id";
+        private static final String PRICE="price";
+        private static final String DATE="date";
+        private static final String OUT_DESCRIPTION="out_description";
 
         private static final String CREATE_USER_TABLE = "CREATE TABLE "+ USER_TABLE +
                 " ("+UID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ EMAIL +" VARCHAR(255) not null unique ,"+ PASSWORD +" VARCHAR(255));";
@@ -139,14 +331,15 @@ public class MyDbAdapter {
 
         private static final String CREATE_OWNER_TABLE = "CREATE TABLE "+ OWNER +
                 " ("+O_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ O_NAME +" VARCHAR(255) ,"+ O_DESCRIPTION+" VARCHAR(255));";
-/*
-        private static final String CREATE_OUTLAY_TABLE = "CREATE TABLE "+ USER_TABLE +
-                " ("+UID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ EMAIL +" VARCHAR(255) ,"+ NUMBER_OF_DAYS+" INTEGER,"+START_DATE+" VARCHAR(255),"+MANAGER_NAME+" VARCHAR(255),"+ PASSWORD +" VARCHAR(255));";
-*/
+
+        private static final String CREATE_OUTLAY_TABLE = "CREATE TABLE "+ OUTLAY +
+                " ("+OUT_ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+  OUTLAY_M_ID+" INTEGER,"+ OUTLAY_O_ID+" INTEGER,"+PRICE+" REAL,"+DATE+" TEXT,"+ OUT_DESCRIPTION +" VARCHAR(255));";
+
 
         private static final String DROP_USER_TABLE ="DROP TABLE IF EXISTS "+ USER_TABLE;
         private static final String DROP_MATERIAL_TABLE ="DROP TABLE IF EXISTS "+ MATERIAL;
         private static final String DROP_OWNER_TABLE ="DROP TABLE IF EXISTS "+ OWNER;
+        private static final String DROP_OUTLAY_TABLE ="DROP TABLE IF EXISTS "+ OUTLAY;
         private Context context;
 
         public myDbHelper(Context context) {
@@ -160,11 +353,14 @@ public class MyDbAdapter {
                 db.execSQL(CREATE_USER_TABLE);
                 db.execSQL(CREATE_MATERIAL_TABLE);
                 db.execSQL(CREATE_OWNER_TABLE);
+                db.execSQL(CREATE_OUTLAY_TABLE);
             } catch (Exception e) {
 
                 Toast.makeText(context, ""+e, Toast.LENGTH_SHORT).show();
             }
         }
+
+
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -174,6 +370,7 @@ public class MyDbAdapter {
                 db.execSQL(DROP_USER_TABLE);
                 db.execSQL(DROP_MATERIAL_TABLE);
                 db.execSQL(DROP_OWNER_TABLE);
+                db.execSQL(DROP_OUTLAY_TABLE);
                 onCreate(db);
             }catch (Exception e) {
                 Toast.makeText(context, ""+e, Toast.LENGTH_SHORT).show();

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/add_owner"
+        android:enabled="true"
+        android:title="Add owner"
+        />
+    <item
+        android:id="@+id/add_material"
+        android:enabled="true"
+        android:title="Add material"
+        />
+    <item
+        android:id="@+id/add_outlay"
+        android:enabled="true"
+        android:title="Add Outlay"
+        />
+
+</menu>

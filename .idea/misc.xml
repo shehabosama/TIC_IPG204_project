@@ -3,8 +3,25 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_add_material.xml" value="0.4" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout-w936dp/owner_item_recycler_view.xml" value="0.14946962391513982" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_add_material.xml" value="0.2825520833333333" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_add_outlay.xml" value="0.2" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_add_owner.xml" value="0.22826086956521738" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_login.xml" value="0.22826086956521738" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_material_update.xml" value="0.1" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_materials.xml" value="0.11302083333333333" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_outlay_update.xml" value="0.11302083333333333" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_outlays.xml" value="0.11302083333333333" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_owner_update.xml" value="0.22826086956521738" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_owners.xml" value="0.15833333333333333" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_splash_screen.xml" value="0.11302083333333333" />
         <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/activity_user_registration.xml" value="0.22826086956521738" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/item_spinner.xml" value="0.22826086956521738" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/outlay_item.xml" value="0.22826086956521738" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/owner_item.xml" value="0.536" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/layout/test.xml" value="0.12360688956433637" />
+        <entry key="..\:/android_projects/TIC_IPG204_project/app/src/main/res/menu/user_menu.xml" value="0.15833333333333333" />
       </map>
     </option>
   </component>

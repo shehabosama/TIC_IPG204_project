@@ -2,6 +2,7 @@ package com.example.tic_ipg204_project.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -42,6 +43,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                         editEmail.setText("");
                         editPassword.setText("");
                         editConfirmPassword.setText("");
+                        startActivity(new Intent(UserRegistrationActivity.this, LoginActivity.class));
                     }else{
                         Toast.makeText(UserRegistrationActivity.this, "there is something wrong", Toast.LENGTH_SHORT).show();
                     }

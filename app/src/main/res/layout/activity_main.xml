@@ -6,13 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/outlay_btn"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="20sp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginTop="48dp"
+        android:text="Go to outlays"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/owner_btn" />
+
+    <Button
+        android:id="@+id/owner_btn"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="Go to Owners"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/material_btn" />
+
+    <Button
+        android:id="@+id/material_btn"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="20sp"
+        android:layout_height="wrap_content"
+        android:text="Go to materials"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.262" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
