@@ -4,9 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.example.tic_ipg204_project.R;
 import com.example.tic_ipg204_project.adapters.OutlaysAdapter;
@@ -16,38 +14,26 @@ import com.example.tic_ipg204_project.common.sqlhleper.MyDbAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OwnerOutlaysActivity extends AppCompatActivity implements OutlaysAdapter.OutlayInteraction {
-    private int ownerId;
-    private List<OutLay> outLays;
-    private MyDbAdapter myDbAdapter;
+public class MaterialsNotServiceActivity extends AppCompatActivity implements OutlaysAdapter.OutlayInteraction {
     RecyclerView mrecycler;
-    OutlaysAdapter outlaysAdapter;
+    OutlaysAdapter ownersAdapter;
+    List<OutLay> outLays;
+    MyDbAdapter myDbAdapter;
     LinearLayoutManager mlayoutmanager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_owner_outlays);
-        getSupportActionBar().setTitle("Owners");
-        Intent intent = getIntent();
-        if(intent != null){
-            ownerId = intent.getIntExtra("OWNER_ID",0);
-        }
-        else{
-            Toast.makeText(OwnerOutlaysActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        outLays = new ArrayList<>();
+        setContentView(R.layout.activity_materials_not_service);
+        getSupportActionBar().setTitle("Outlays Not Service Materials");
         myDbAdapter = new MyDbAdapter(this);
-        outLays.addAll(myDbAdapter.getOwnerOutlays(ownerId));
-
+        outLays = new ArrayList<>();
+        outLays.addAll(myDbAdapter.getIsNotServiceMaterialOutlays(0));
         mrecycler = findViewById(R.id.recyclerView);
-        mlayoutmanager=new LinearLayoutManager(this);
+        mlayoutmanager = new LinearLayoutManager(this);
         mrecycler.setLayoutManager(mlayoutmanager);
-        outlaysAdapter =new OutlaysAdapter(OwnerOutlaysActivity.this, outLays,this);
-        mrecycler.setAdapter(outlaysAdapter);
-        getSupportActionBar().setTitle("The outlay of this owner is "+String.valueOf(calculateOutlays()));
-
+        ownersAdapter = new OutlaysAdapter(MaterialsNotServiceActivity.this, outLays, this);
+        mrecycler.setAdapter(ownersAdapter);
+        getSupportActionBar().setTitle("Outlay not Service material: "+String.valueOf(calculateOutlays()));
     }
     public double calculateOutlays(){
         double sum = 0;

@@ -8,12 +8,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.tic_ipg204_project.R;
 import com.example.tic_ipg204_project.adapters.MaterialsAdapter;
-import com.example.tic_ipg204_project.adapters.OwnersAdapter;
 import com.example.tic_ipg204_project.common.model.Material;
-import com.example.tic_ipg204_project.common.model.Owner;
 import com.example.tic_ipg204_project.common.sqlhleper.MyDbAdapter;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.List;
 
 public class MaterialsActivity extends AppCompatActivity implements MaterialsAdapter.MaterialInteraction {
     RecyclerView mrecycler;
-    MaterialsAdapter ownersAdapter;
+    MaterialsAdapter materialsAdapter;
     List<Material> materials;
     MyDbAdapter myDbAdapter;
     LinearLayoutManager mlayoutmanager;
@@ -41,8 +40,8 @@ public class MaterialsActivity extends AppCompatActivity implements MaterialsAda
         mrecycler = findViewById(R.id.recyclerView);
         mlayoutmanager = new LinearLayoutManager(this);
         mrecycler.setLayoutManager(mlayoutmanager);
-        ownersAdapter = new MaterialsAdapter(MaterialsActivity.this, materials, this);
-        mrecycler.setAdapter(ownersAdapter);
+        materialsAdapter = new MaterialsAdapter(MaterialsActivity.this, materials, this);
+        mrecycler.setAdapter(materialsAdapter);
     }
 
     @Override
@@ -58,9 +57,15 @@ public class MaterialsActivity extends AppCompatActivity implements MaterialsAda
 
                 switch (which) {
                     case 0:
-                        myDbAdapter.deleteMaterial(String.valueOf(materials.get(postion).getMaterialId()));
-                        materials.remove(postion);
-                        ownersAdapter.notifyDataSetChanged();
+
+                        if( myDbAdapter.deleteMaterial(String.valueOf(materials.get(postion).getMaterialId())) == -2){
+                            Toast.makeText(MaterialsActivity.this, "this Owner used in outlays please remove outlay first", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(MaterialsActivity.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                            materials.remove(postion);
+                            materialsAdapter.notifyDataSetChanged();
+                        }
+
                         break;
                     case 1:
                         startActivity(new Intent(MaterialsActivity.this, MaterialUpdateActivity.class)

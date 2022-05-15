@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.tic_ipg204_project.R;
 import com.example.tic_ipg204_project.adapters.OwnersAdapter;
@@ -53,9 +54,14 @@ public class OwnersActivity extends AppCompatActivity implements OwnersAdapter.O
 
                 switch(which){
                     case 0:
-                        myDbAdapter.deleteOwner(String.valueOf(owners.get(postion).getOwnerId()));
-                        owners.remove(postion);
-                        ownersAdapter.notifyDataSetChanged();
+                        if(myDbAdapter.deleteOwner(String.valueOf(owners.get(postion).getOwnerId())) == -2){
+                            Toast.makeText(OwnersActivity.this, "this Owner used in outlays please remove outlay first", Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(OwnersActivity.this, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                            owners.remove(postion);
+                            ownersAdapter.notifyDataSetChanged();
+                        }
+
                         break;
                     case 1:
                         startActivity(new Intent(OwnersActivity.this , OwnerUpdateActivity.class)
@@ -65,7 +71,7 @@ public class OwnersActivity extends AppCompatActivity implements OwnersAdapter.O
                         break;
                     case 2:
                         startActivity(new Intent(OwnersActivity.this , OwnerOutlaysActivity.class)
-                                .putExtra("OWNER_ID",String.valueOf(owner.getOwnerId())));
+                                .putExtra("OWNER_ID",owner.getOwnerId()));
                         break;
                 }
             }

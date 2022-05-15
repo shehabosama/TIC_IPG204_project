@@ -124,7 +124,6 @@ public class AddOutlayActivity extends AppCompatActivity  {
                                 !TextUtils.isEmpty(editTextPrice.getText().toString()) &&
                                 !TextUtils.isEmpty(editTextDescription.getText().toString())&&
                                 !TextUtils.isEmpty(yourDateString))  {
-                    myDbAdapter.insertOutLayData(materialId,ownerId,editTextPrice.getText().toString(),yourDateString , editTextDescription.getText().toString());
                     if (  myDbAdapter.insertOutLayData(materialId,ownerId,editTextPrice.getText().toString(),yourDateString , editTextDescription.getText().toString()) != -1){
                         Toast.makeText(AddOutlayActivity.this, "Outlay Added Successfully", Toast.LENGTH_SHORT).show();
                         editTextDescription.setText("");

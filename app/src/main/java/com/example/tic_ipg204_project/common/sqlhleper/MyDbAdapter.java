@@ -202,51 +202,95 @@ public class MyDbAdapter {
     public List<OutLay> getOwnerOutlays(int ownerId)
     {
         SQLiteDatabase dbb = myhelper.getWritableDatabase();
-        Cursor cursor=null;
-        Material material = null;
+        Cursor cursor;
         cursor =  dbb.rawQuery("select * from " + myDbHelper.OUTLAY + " where " + myDbHelper.OUTLAY_O_ID + "=" + ownerId  , null);
         List<OutLay> outLays = new ArrayList<>();
         while (cursor.moveToNext())
         {
+
             int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
             int materialId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_M_ID));
             int _ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
             double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
             String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
             String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
-
             outLays.add(new OutLay(id,_ownerId,materialId , price,date,description));
         }
             cursor.close();
-
         return outLays;
     }
 
     @SuppressLint("Range")
-    public List<OutLay> getMaterialOutlays(int materialId)
+    public List<OutLay> getIsServiceMaterialOutlays(int isService)
     {
         SQLiteDatabase dbb = myhelper.getWritableDatabase();
         Cursor cursor=null;
+        Cursor cursor2=null;
         Material material = null;
-        cursor =  dbb.rawQuery("select * from " + myDbHelper.OUTLAY + " where " + myDbHelper.OUTLAY_M_ID + "=" + materialId  , null);
+        cursor =  dbb.rawQuery("select * from " + myDbHelper.OUTLAY , null);
         List<OutLay> outLays = new ArrayList<>();
         while (cursor.moveToNext())
         {
-            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
             int _materialId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_M_ID));
-            int _ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
-            double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
-            String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
-            String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
+            cursor2 =  dbb.rawQuery("select * from " + myDbHelper.MATERIAL + " where " + myDbHelper.M_ID + "=" + _materialId  , null);
+            while (cursor2.moveToNext())
+            {
+                boolean _isService =cursor2.getInt(cursor2.getColumnIndex(myDbHelper.IS_SERVICE))>0;
+                if(_isService){
+                    int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
 
-            outLays.add(new OutLay(id,_ownerId,_materialId , price,date,description));
+                    int _ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
+                    double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
+                    String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
+                    String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
+
+                    outLays.add(new OutLay(id,_ownerId,_materialId , price,date,description));
+                }
+            }
+
         }
         cursor.close();
+        cursor2.close();
+
+        return outLays;
+    }
+
+    @SuppressLint("Range")
+    public List<OutLay> getIsNotServiceMaterialOutlays(int isService)
+    {
+        SQLiteDatabase dbb = myhelper.getWritableDatabase();
+        Cursor cursor=null;
+        Cursor cursor2=null;
+        Material material = null;
+        cursor =  dbb.rawQuery("select * from " + myDbHelper.OUTLAY , null);
+        List<OutLay> outLays = new ArrayList<>();
+        while (cursor.moveToNext())
+        {
+            int _materialId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_M_ID));
+            cursor2 =  dbb.rawQuery("select * from " + myDbHelper.MATERIAL + " where " + myDbHelper.M_ID + "=" + _materialId  , null);
+            while (cursor2.moveToNext())
+            {
+                boolean _isService =cursor2.getInt(cursor2.getColumnIndex(myDbHelper.IS_SERVICE))>0;
+                if(!_isService){
+                    int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
+
+                    int _ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
+                    double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
+                    String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
+                    String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
+
+                    outLays.add(new OutLay(id,_ownerId,_materialId , price,date,description));
+                }
+            }
+
+        }
+        cursor.close();
+        cursor2.close();
 
         return outLays;
     }
     @SuppressLint("Range")
-    public List<OutLay> getOutlaysByYear(String year)
+    public List<OutLay> getOutlaysByYear(int year)
     {
       List<OutLay> outLays = getOutlayData();
       List<OutLay> filteredOutLays =new ArrayList<>();
@@ -254,16 +298,14 @@ public class MyDbAdapter {
         for (OutLay o:outLays) {
             yourDateString = o.getDate();
             SimpleDateFormat yourDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-
             try {
                 Date yourDate = yourDateFormat.parse(yourDateString);
                 SimpleDateFormat formatNowYear = null;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                     formatNowYear = new SimpleDateFormat("yyyy");
                 }
-
-                String currentYear = formatNowYear.format(yourDate);
-                if (year .equals(currentYear)){
+                int currentYear = Integer.parseInt(formatNowYear.format(yourDate));
+                if (year == currentYear){
                     filteredOutLays.add(o);
                 }
             } catch (ParseException e) {
@@ -274,7 +316,7 @@ public class MyDbAdapter {
     }
 
     @SuppressLint("Range")
-    public List<OutLay> getOutlaysByMonth(String month)
+    public List<OutLay> getOutlaysByMonth(int month)
     {
         List<OutLay> outLays = getOutlayData();
         List<OutLay> filteredOutLays =new ArrayList<>();
@@ -286,8 +328,8 @@ public class MyDbAdapter {
             try {
                 Date yourDate = yourDateFormat.parse(yourDateString);
                 SimpleDateFormat formatNowMonth = new SimpleDateFormat("MM");
-                String currentMonth = formatNowMonth.format(yourDate);
-                if (month.equals(currentMonth)){
+                int currentMonth = Integer.parseInt(formatNowMonth.format(yourDate));
+                if (month==currentMonth){
                     filteredOutLays.add(o);
                 }
             } catch (ParseException e) {
@@ -299,13 +341,23 @@ public class MyDbAdapter {
 
     public  int deleteOwner(String ownerId)
     {
-        SQLiteDatabase db = myhelper.getWritableDatabase();
-        String[] whereArgs ={ownerId};
+        boolean checkIfExists = false;
+        List<OutLay> outLays = getOutlayData();
+        for(OutLay outLay: outLays){
+            if(ownerId.equals(String.valueOf(outLay.getOwnerId()))){
+                checkIfExists = true;
+            }
+        }
+        if(checkIfExists){
+            return -2;
+        }else{
+            SQLiteDatabase db = myhelper.getWritableDatabase();
+            String[] whereArgs ={ownerId};
 
-        int count =db.delete(myDbHelper.OWNER, myDbHelper.O_ID+" = ?",whereArgs);
-
-        Log.e(TAG, "delete: "+count );
-        return  count;
+            int count =db.delete(myDbHelper.OWNER, myDbHelper.O_ID+" = ?",whereArgs);
+            Log.e(TAG, "delete: "+count );
+            return  count;
+        }
     }
     public  int deleteOutlay(String outlayId)
     {
@@ -319,13 +371,24 @@ public class MyDbAdapter {
     }
     public  int deleteMaterial(String materialId)
     {
-        SQLiteDatabase db = myhelper.getWritableDatabase();
-        String[] whereArgs ={materialId};
+        boolean checkIfExists = false;
+        List<OutLay> outLays = getOutlayData();
+        for(OutLay outLay: outLays){
+            if(materialId.equals(String.valueOf(outLay.getOwnerId()))){
+                checkIfExists = true;
+            }
+        }
+        if(checkIfExists){
+            return -2;
+        }else{
+            SQLiteDatabase db = myhelper.getWritableDatabase();
+            String[] whereArgs ={materialId};
 
-        int count =db.delete(myDbHelper.MATERIAL, myDbHelper.M_ID+" = ?",whereArgs);
+            int count =db.delete(myDbHelper.MATERIAL, myDbHelper.M_ID+" = ?",whereArgs);
+            Log.e(TAG, "delete: "+count );
+            return  count;
+        }
 
-        Log.e(TAG, "delete: "+count );
-        return  count;
     }
     public int updateOwner(String id , String newName, String description)
     {

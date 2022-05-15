@@ -39,6 +39,7 @@ public class OutlaysActivity extends AppCompatActivity implements OutlaysAdapter
         mrecycler.setLayoutManager(mlayoutmanager);
         outlaysAdapter =new OutlaysAdapter(OutlaysActivity.this, outLays,this);
         mrecycler.setAdapter(outlaysAdapter);
+        getSupportActionBar().setTitle("The sum of outlays:"+String.valueOf(calculateOutlays()));
     }
     @Override
     public void onClickItem(OutLay outLay , int postion) {
@@ -69,7 +70,13 @@ public class OutlaysActivity extends AppCompatActivity implements OutlaysAdapter
         });
         builder.show();
     }
-
+    public double calculateOutlays(){
+        double sum = 0;
+        for (OutLay outlay:outLays) {
+            sum+=outlay.getPrice();
+        }
+        return sum;
+    }
     @Override
     protected void onStart() {
         super.onStart();

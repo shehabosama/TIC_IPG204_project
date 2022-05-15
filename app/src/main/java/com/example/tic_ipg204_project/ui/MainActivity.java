@@ -13,7 +13,7 @@ import com.example.tic_ipg204_project.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button materialBtn , ownerBtn , outlayBtn;
+    private Button materialBtn , ownerBtn , outlayBtn , materialServiceBtn , materialNotServiceBtn , filterOutlayByDateBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
         materialBtn = findViewById(R.id.material_btn);
         ownerBtn = findViewById(R.id.owner_btn);
         outlayBtn = findViewById(R.id.outlay_btn);
+        materialServiceBtn = findViewById(R.id.material_service_btn);
+        materialNotServiceBtn = findViewById(R.id.material_not_service_btn);
+        filterOutlayByDateBtn = findViewById(R.id.filter_outlay_by_date_btn);
 
         materialBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,6 +42,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this,OutlaysActivity.class));
+            }
+        });
+        materialServiceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,MaterialsServiceActivity.class));
+            }
+        });
+        materialNotServiceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,MaterialsNotServiceActivity.class));
+            }
+        });
+        filterOutlayByDateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,FilterOutlayByDateActivity.class));
             }
         });
     }
