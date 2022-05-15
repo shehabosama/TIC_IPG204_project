@@ -43,7 +43,7 @@ public class OwnersActivity extends AppCompatActivity implements OwnersAdapter.O
     @Override
     public void onClickItem(Owner owner , int postion) {
         final CharSequence option[]=new CharSequence[]{
-                "Delete","Update"
+                "Delete","Update","Owner outlays"
         };
         AlertDialog.Builder builder =new AlertDialog.Builder(this);
         builder.setTitle("Options");
@@ -62,6 +62,10 @@ public class OwnersActivity extends AppCompatActivity implements OwnersAdapter.O
                                 .putExtra("OWNER_ID",String.valueOf(owner.getOwnerId()))
                                 .putExtra("OWNER_NAME" , owner.getOwnerName())
                                 .putExtra("OWNER_DESCRIPTION",owner.getDescription()));
+                        break;
+                    case 2:
+                        startActivity(new Intent(OwnersActivity.this , OwnerOutlaysActivity.class)
+                                .putExtra("OWNER_ID",String.valueOf(owner.getOwnerId())));
                         break;
                 }
             }

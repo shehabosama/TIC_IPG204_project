@@ -17,7 +17,10 @@ import com.example.tic_ipg204_project.common.model.OutLay;
 import com.example.tic_ipg204_project.common.model.Owner;
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -195,26 +198,105 @@ public class MyDbAdapter {
         return material;
     }
 
-    /*public List<UserVacationRequest> getData()
-{
-    SQLiteDatabase db = myhelper.getWritableDatabase();
-    String[] columns = {myDbHelper.UID, myDbHelper.EMAIL,myhelper.NUMBER_OF_DAYS, myDbHelper.START_DATE, myDbHelper.MANAGER_NAME , myDbHelper.PASSWORD};
-    Cursor cursor =db.query(myDbHelper.USER_TABLE,columns,null,null,null,null,null);
-    StringBuffer buffer= new StringBuffer();
-    List<UserVacationRequest> userVacationRequests = new ArrayList<>();
-    while (cursor.moveToNext())
+    @SuppressLint("Range")
+    public List<OutLay> getOwnerOutlays(int ownerId)
     {
-        int cid =cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
-        String name =cursor.getString(cursor.getColumnIndex(myDbHelper.EMAIL));
-        int numberOfDays =cursor.getInt(cursor.getColumnIndex(myDbHelper.NUMBER_OF_DAYS));
-        String startDate =cursor.getString(cursor.getColumnIndex(myDbHelper.START_DATE));
-        String reason =cursor.getString(cursor.getColumnIndex(myDbHelper.PASSWORD));
-        String managerName =cursor.getString(cursor.getColumnIndex(myDbHelper.MANAGER_NAME));
-        userVacationRequests.add(new UserVacationRequest(cid,numberOfDays,startDate,managerName,reason,name));
+        SQLiteDatabase dbb = myhelper.getWritableDatabase();
+        Cursor cursor=null;
+        Material material = null;
+        cursor =  dbb.rawQuery("select * from " + myDbHelper.OUTLAY + " where " + myDbHelper.OUTLAY_O_ID + "=" + ownerId  , null);
+        List<OutLay> outLays = new ArrayList<>();
+        while (cursor.moveToNext())
+        {
+            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
+            int materialId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_M_ID));
+            int _ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
+            double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
+            String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
+            String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
+
+            outLays.add(new OutLay(id,_ownerId,materialId , price,date,description));
+        }
+            cursor.close();
+
+        return outLays;
     }
-    return userVacationRequests;
-}
-*/
+
+    @SuppressLint("Range")
+    public List<OutLay> getMaterialOutlays(int materialId)
+    {
+        SQLiteDatabase dbb = myhelper.getWritableDatabase();
+        Cursor cursor=null;
+        Material material = null;
+        cursor =  dbb.rawQuery("select * from " + myDbHelper.OUTLAY + " where " + myDbHelper.OUTLAY_M_ID + "=" + materialId  , null);
+        List<OutLay> outLays = new ArrayList<>();
+        while (cursor.moveToNext())
+        {
+            int id =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUT_ID));
+            int _materialId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_M_ID));
+            int _ownerId =cursor.getInt(cursor.getColumnIndex(myDbHelper.OUTLAY_O_ID));
+            double price =cursor.getDouble(cursor.getColumnIndex(myDbHelper.PRICE));
+            String date =cursor.getString(cursor.getColumnIndex(myDbHelper.DATE));
+            String description =cursor.getString(cursor.getColumnIndex(myDbHelper.OUT_DESCRIPTION));
+
+            outLays.add(new OutLay(id,_ownerId,_materialId , price,date,description));
+        }
+        cursor.close();
+
+        return outLays;
+    }
+    @SuppressLint("Range")
+    public List<OutLay> getOutlaysByYear(String year)
+    {
+      List<OutLay> outLays = getOutlayData();
+      List<OutLay> filteredOutLays =new ArrayList<>();
+      String yourDateString;
+        for (OutLay o:outLays) {
+            yourDateString = o.getDate();
+            SimpleDateFormat yourDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            try {
+                Date yourDate = yourDateFormat.parse(yourDateString);
+                SimpleDateFormat formatNowYear = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    formatNowYear = new SimpleDateFormat("yyyy");
+                }
+
+                String currentYear = formatNowYear.format(yourDate);
+                if (year .equals(currentYear)){
+                    filteredOutLays.add(o);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return filteredOutLays;
+    }
+
+    @SuppressLint("Range")
+    public List<OutLay> getOutlaysByMonth(String month)
+    {
+        List<OutLay> outLays = getOutlayData();
+        List<OutLay> filteredOutLays =new ArrayList<>();
+        String yourDateString;
+        for (OutLay o:outLays) {
+            yourDateString = o.getDate();
+            SimpleDateFormat yourDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+            try {
+                Date yourDate = yourDateFormat.parse(yourDateString);
+                SimpleDateFormat formatNowMonth = new SimpleDateFormat("MM");
+                String currentMonth = formatNowMonth.format(yourDate);
+                if (month.equals(currentMonth)){
+                    filteredOutLays.add(o);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return filteredOutLays;
+    }
+
     public  int deleteOwner(String ownerId)
     {
         SQLiteDatabase db = myhelper.getWritableDatabase();
